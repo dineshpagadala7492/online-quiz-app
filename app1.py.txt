@@ -1,0 +1,27 @@
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
+
+# Quiz questions
+questions = [
+    {"q": "What is 2 + 2?", "options": ["3", "4", "5"], "answer": "4"},
+    {"q": "What is the capital of India?", "options": ["Delhi", "Mumbai", "Kolkata"], "answer": "Delhi"}
+]
+
+@app.route('/')
+def home():
+    return render_template("home.html")
+
+@app.route('/quiz', methods=["GET", "POST"])
+def quiz():
+    if request.method == "POST":
+        score = 0
+        for i, q in enumerate(questions):
+            ans = request.form.get(f"q{i}")
+            if ans == q["answer"]:
+                score += 1
+        return render_template("result.html", score=score, total=len(questions))
+    return render_template("quiz.html", questions=questions)
+
+if __name__ == "__main__":
+    app.run(debug=True)
